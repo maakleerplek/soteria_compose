@@ -1,2 +1,2 @@
 *.env
-wikijs/db_data/
+wikijs/db_data/*
