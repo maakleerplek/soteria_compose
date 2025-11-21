@@ -1,0 +1,15 @@
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    ports:
+      - "9000:9000"  # Portainer Web UI
+      - "8000:8000"  # Portainer Edge Agent (optional)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /docker_data/portainer:/data
+    environment:
+      # Optional: Set admin password on first run (comment out after setup)
+      # PORTAINER_ADMIN_PASSWORD_FILE: /run/secrets/portainer_admin_password
+      TZ: Europe/Amsterdam
