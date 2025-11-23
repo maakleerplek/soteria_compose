@@ -115,7 +115,7 @@ main() {
 
     echo "Next steps:"
     echo "1. Access Portainer Web UI:"
-    echo -e "   ${BLUE}http://${SERVER_IP}:9000${NC}"
+    echo -e "   ${BLUE}http://${SERVER_IP}${NC}"
     echo ""
     echo "2. Create your admin account (first time only)"
     echo "   - Username: admin"
