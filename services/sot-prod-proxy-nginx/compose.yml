@@ -1,5 +1,5 @@
 services:
-  app:
+  nginx-app:
     image: 'docker.io/jc21/nginx-proxy-manager:latest'
     container_name: sot-prod-proxy-nginx
     restart: unless-stopped
