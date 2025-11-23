@@ -1,0 +1,17 @@
+version: "3"
+services:
+  adguardhome:
+    image: adguard/adguardhome
+    container_name: adguardhome
+    restart: unless-stopped
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "5350:80/tcp" # AdGuard Home web UI HTTP on host port 5350
+      - "5443:443/tcp" # AdGuard Home web UI HTTPS on host port 5443
+      - "853:853/tcp" # DNS over TLS
+      - "784:784/udp" # DNS over QUIC
+      - "3082:3000/tcp" # Optional, web UI alternate port
+    volumes:
+      - /docker_data/soft-prod-adguard/work:/opt/adguardhome/work
+      - /docker_data/soft-prod-adguard/conf:/opt/adguardhome/conf
