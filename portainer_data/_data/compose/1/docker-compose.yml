@@ -1,0 +1,51 @@
+version: '3.8' # Specify the compose file format version
+
+services:
+  # Nginx Proxy Manager service
+  nginx-proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest' # Official image for Nginx Proxy Manager
+    container_name: nginx-proxy-manager # Assign a name to the container
+    ports:
+      - '80:80'   # HTTP port, accessible from host
+      - '81:81'   # Admin interface port, accessible from host (for initial setup and management)
+      - '443:443' # HTTPS port, accessible from host
+
+    volumes:
+      - ./data:/data  # Persistent storage for NPM configuration, certificates, etc.
+      - ./logs:/var/log/nginx # Optional: Persistent storage for Nginx logs
+      # Explicitly mount /etc/letsencrypt to a subdirectory of /data on the host.
+      # This addresses a common "not mounted" error seen during startup for certificate management.
+      - ./data/letsencrypt:/etc/letsencrypt
+    environment:
+      # Database connection details for Nginx Proxy Manager
+      DB_MYSQL_HOST: db # Hostname of the database service (defined below)
+      DB_MYSQL_PORT: 3306 # Default MariaDB/MySQL port
+      DB_MYSQL_USER: npm # Database user for NPM
+      DB_MYSQL_PASSWORD: pawja0-mixkak-dyTpuj # Database password for NPM (CHANGE THIS!)
+      DB_MYSQL_NAME: npm # Database name for NPM
+      # Optional: SQLite fallback (set to "true" to disable MySQL/MariaDB and use SQLite)
+      # DISABLE_IPV6: 'true' # Uncomment if you have issues with IPv6
+    depends_on:
+      - db # Ensure the database service starts before NPM
+    networks:
+      - npm_network # Connect to the custom network
+
+  # MariaDB database service for Nginx Proxy Manager
+  db:
+    image: 'mariadb:10' # Use a stable version of MariaDB
+    container_name: npm-mariadb # Assign a name to the database container
+    environment:
+      MARIADB_ROOT_PASSWORD: pawja0-mixkak-dyTpuj # Root password for MariaDB (CHANGE THIS!)
+      MARIADB_DATABASE: npm # Database name for NPM
+      MARIADB_USER: npm # Database user for NPM
+      MARIADB_PASSWORD: pawja0-mixkak-dyTpuj # Database password for NPM (MATCHES NPM SERVICE)
+      # Optional: Timezone setting for the database
+      TZ: Europe/Brussels # Set timezone (adjust as needed, e.g., 'America/New_York')
+    volumes:
+      - ./mysql:/var/lib/mysql # Persistent storage for MariaDB data
+    networks:
+      - npm_network # Connect to the custom network
+
+networks:
+  npm_network:
+    driver: bridge # Define a custom bridge network for the services

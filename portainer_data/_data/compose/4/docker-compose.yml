@@ -1,0 +1,66 @@
+# docker-compose.yml
+
+version: '3.8'
+
+# Define named volumes for data persistence
+volumes:
+  keycloak_data:
+  postgres_data:
+
+# Define a custom bridge network for the services
+networks:
+  keycloak_network:
+    driver: bridge
+
+services:
+  # PostgreSQL database service
+  db:
+    image: postgres:13-alpine # Using a lightweight PostgreSQL image
+    container_name: keycloak_postgres_db
+    environment:
+      POSTGRES_DB: keycloak # Database name for Keycloak
+      POSTGRES_USER: keycloak # Database user for Keycloak
+      POSTGRES_PASSWORD: bugvih-vegcym-zuKca3 # Database password for Keycloak (change in production!)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist PostgreSQL data
+    networks:
+      - keycloak_network # Connect to the custom network
+    restart: unless-stopped # Restart policy
+
+  # Keycloak server service
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.5 # Official Keycloak image
+    container_name: keycloak_server
+    environment:
+      # Database connection settings for Keycloak
+      KC_DB: postgres # Specify PostgreSQL as the database type
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak # JDBC URL to the PostgreSQL container (db is the service name)
+      KC_DB_USERNAME: keycloak # Database user
+      KC_DB_PASSWORD: bugvih-vegcym-zuKca3 # Database password
+
+      # Keycloak administration settings (initial admin user)
+      KEYCLOAK_ADMIN: admin # Admin username (change in production!)
+      KEYCLOAK_ADMIN_PASSWORD: P@ssw0rd123 # Admin password (change in production!)
+
+      # Keycloak hostname and port settings
+      KC_HOSTNAME: 10.72.2.10 # Set the hostname for Keycloak (change if deploying to a different host)
+      KC_HTTP_PORT: 8080 # Keycloak's HTTP port
+      # KC_PROXY: edge # Recommended for reverse proxies (e.g., if using Nginx/Apache later) - Commented out for direct access
+      KC_HEALTH_ENABLED: true # Enable health endpoints
+
+      # Other Keycloak configurations
+      KC_METRICS_ENABLED: true # Enable metrics endpoint
+      KC_LOG_LEVEL: INFO # Set logging level
+
+    ports:
+      - "8080:8080" # Map container port 8080 to host port 8080
+    volumes:
+      - keycloak_data:/opt/keycloak/data # Persist Keycloak data (e.g., themes, configurations)
+    depends_on:
+      - db # Ensure the database service starts before Keycloak
+    networks:
+      - keycloak_network # Connect to the custom network
+    command: start-dev # Start Keycloak in development mode (for quick setup)
+    # For production, consider 'start' and configure a proper database,
+    # HTTPS, and potentially a reverse proxy.
+    restart: unless-stopped # Restart policy
