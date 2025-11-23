@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       TZ: 'Europe/Brussels'
     volumes:
-      - /docker_data/sot-prod-wiki-wikijs_wikidb-data:/var/lib/postgresql/data
+      - /docker_data/sot-prod-wiki-wikijs-wikidb_data:/var/lib/postgresql/data
     restart: unless-stopped
 
   wiki:
