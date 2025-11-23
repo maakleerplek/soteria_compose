@@ -2,5 +2,5 @@ name: maakleerplek-soteria-stack
 
 # The Include list: Docker will merge these into one giant config at runtime
 include:
-  - services/sot-prod-proxy-nginx/compose.yml
+  #  - services/sot-prod-proxy-nginx/compose.yml
   - services/sot-prod-wiki-wikijs/compose.yml
