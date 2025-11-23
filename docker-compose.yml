@@ -4,3 +4,4 @@ name: maakleerplek-soteria-stack
 include:
   - services/sot-prod-proxy-nginx/compose.yml
   - services/sot-prod-wiki-wikijs/compose.yml
+  - services/sot-prod-auth-keycloak/compose.yml
