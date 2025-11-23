@@ -27,3 +27,5 @@ services:
     restart: unless-stopped
     ports:
       - "3081:3000"
+    volumes:
+      - /docker_data/sot-prod-wiki-wikijs-wiki_data_content:/wiki/data/content
