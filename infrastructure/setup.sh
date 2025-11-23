@@ -76,6 +76,7 @@ get_server_ip() {
     if [ -z "$SERVER_IP" ]; then
         SERVER_IP="localhost"
     fi
+    SERVER_IP='10.72.2.10'
     echo "$SERVER_IP"
 }
 
