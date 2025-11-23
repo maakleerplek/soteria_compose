@@ -1,7 +1,7 @@
 services:
   portainer:
     image: portainer/portainer-ce:latest
-    container_name: portainer
+    container_name: sot-prod-portainer
     restart: always
     ports:
       - "9000:9000"  # Portainer Web UI
