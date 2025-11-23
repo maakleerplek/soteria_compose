@@ -12,4 +12,4 @@ services:
     environment:
       # Optional: Set admin password on first run (comment out after setup)
       # PORTAINER_ADMIN_PASSWORD_FILE: /run/secrets/portainer_admin_password
-      TZ: Europe/Amsterdam
+      TZ: 'Europe/Brussels'
