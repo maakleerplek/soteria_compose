@@ -4,7 +4,8 @@ services:
     container_name: sot-prod-portainer
     restart: always
     ports:
-      - "9000:9000"  # Portainer Web UI
+      - 9443:9443
+      - 8000:8000 # Portainer Web UI
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /docker_data/sot-prod-portainer:/data
