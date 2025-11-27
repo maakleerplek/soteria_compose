@@ -1,8 +1,9 @@
-name: sot-prod
+name: sot-prod-stack
 
 # The Include list: Docker will merge these into one giant config at runtime
 include:
   - services/sot-prod-proxy-nginx/compose.yml
   - services/sot-prod-wiki-wikijs/compose.yml
   - services/sot-prod-auth-keycloak/compose.yml
-  - services/soft-prod-adguard/compose.yml
+  - services/sot-prod-dns-adguard/compose.yml
+  - services/sot-prod-pass-bitwarden/compose.yml
