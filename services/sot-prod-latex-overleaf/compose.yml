@@ -1,0 +1,54 @@
+services:
+  overleaf-mongo:
+    image: mongo:6.0
+    container_name: sot-prod-latex-overleaf-mongo
+    environment:
+      TZ: 'Europe/Brussels'
+    volumes:
+      - /docker_data/sot-prod-latex-overleaf-mongo_data:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test: echo 'db.stats().ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  overleaf-redis:
+    image: redis:7-alpine
+    container_name: sot-prod-latex-overleaf-redis
+    environment:
+      TZ: 'Europe/Brussels'
+    volumes:
+      - /docker_data/sot-prod-latex-overleaf-redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  overleaf:
+    image: sharelatex/sharelatex:latest
+    container_name: sot-prod-latex-overleaf
+    depends_on:
+      overleaf-mongo:
+        condition: service_healthy
+      overleaf-redis:
+        condition: service_healthy
+    environment:
+      SHARELATEX_APP_NAME: ${OVERLEAF_APP_NAME}
+      SHARELATEX_MONGO_URL: mongodb://overleaf-mongo/sharelatex
+      SHARELATEX_REDIS_HOST: overleaf-redis
+      REDIS_HOST: overleaf-redis
+      ENABLED_LINKED_FILE_TYPES: 'project_file,project_output_file'
+      ENABLE_CONVERSIONS: 'true'
+      EMAIL_CONFIRMATION_DISABLED: 'true'
+      SHARELATEX_SITE_URL: ${OVERLEAF_SITE_URL}
+      SHARELATEX_NAV_TITLE: ${OVERLEAF_APP_NAME}
+      SHARELATEX_ADMIN_EMAIL: ${OVERLEAF_ADMIN_EMAIL}
+      TZ: 'Europe/Brussels'
+    volumes:
+      - /docker_data/sot-prod-latex-overleaf_data:/var/lib/sharelatex
+    ports:
+      - "8083:80"
+    restart: unless-stopped
