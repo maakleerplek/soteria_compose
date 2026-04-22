@@ -4,6 +4,5 @@ name: sot-prod-stack
 include:
   - services/sot-prod-proxy-nginx/compose.yml
   - services/sot-prod-wiki-wikijs/compose.yml
-  - services/sot-prod-auth-keycloak/compose.yml
+  - services/sot-prod-auth-authentik/compose.yml
   - services/sot-prod-dns-adguard/compose.yml
-  - services/sot-prod-pass-bitwarden/compose.yml

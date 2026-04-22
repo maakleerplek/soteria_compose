@@ -54,14 +54,14 @@ All services use timezone `Europe/Brussels`.
 - **Data**: `/docker_data/sot-prod-wiki-wikijs-wikidb_data`, `/docker_data/sot-prod-wiki-wikijs-wiki_data_content`
 - **Secrets**: `WIKI_POSTGRES_DB`, `WIKI_POSTGRES_USER`, `WIKI_POSTGRES_PASSWORD`
 
-### sot-prod-auth-keycloak
-- **Image**: `quay.io/keycloak/keycloak:24.0.5` + PostgreSQL 15 Alpine
+### sot-prod-auth-authentik
+- **Image**: `ghcr.io/goauthentik/server:2024.12` + PostgreSQL 16 Alpine + Redis Alpine
 - **Purpose**: Identity and access management (SSO)
-- **Ports**: 8080
-- **Services**: `keycloak` (app), `keycloakdb` (database)
-- **Data**: `/docker_data/sot-prod-auth-keycloak-postgres_data`, `/docker_data/sot-prod-auth-keycloak_data`
-- **Secrets**: `KEYCLOAK_DB_NAME`, `KEYCLOAK_DB_USER`, `KEYCLOAK_DB_PASSWORD`, `KEYCLOAK_ADMIN_USER`, `KEYCLOAK_ADMIN_PASSWORD`, `KEYCLOAK_HOSTNAME`
-- **Note**: Running in `start-dev` mode with `KC_PROXY=edge` for reverse proxy compatibility
+- **Ports**: 9000 (HTTP), 9443 (HTTPS)
+- **Services**: `authentik-server` (app), `authentik-worker` (background tasks), `authentik-db` (database), `authentik-redis` (cache)
+- **Data**: `/docker_data/sot-prod-auth-authentik-postgres_data`, `/docker_data/sot-prod-auth-authentik-redis_data`, `/docker_data/sot-prod-auth-authentik_media`, `/docker_data/sot-prod-auth-authentik_templates`
+- **Secrets**: `AUTHENTIK_POSTGRES_DB`, `AUTHENTIK_POSTGRES_USER`, `AUTHENTIK_POSTGRES_PASSWORD`, `AUTHENTIK_SECRET_KEY`, `AUTHENTIK_EMAIL_*`
+- **Note**: First admin user is created via the setup wizard at `/if/flow/initial-setup/` on first launch.
 
 ### soft-prod-adguard
 - **Image**: `adguard/adguardhome`
@@ -90,7 +90,7 @@ docker compose logs -f
 
 # View logs for specific service
 docker compose logs -f wiki
-docker compose logs -f keycloak
+docker compose logs -f authentik-server
 
 # View service status
 docker compose ps
@@ -118,7 +118,7 @@ docker compose up -d --force-recreate wiki
 # Execute commands in a running container
 docker compose exec wiki sh
 docker compose exec wikidb psql -U ${WIKI_POSTGRES_USER} -d ${WIKI_POSTGRES_DB}
-docker compose exec keycloak sh
+docker compose exec authentik-server sh
 ```
 
 ### Portainer Management
@@ -226,13 +226,15 @@ WIKI_POSTGRES_DB=wiki
 WIKI_POSTGRES_USER=wikijs
 WIKI_POSTGRES_PASSWORD=<secret>
 
-# Keycloak
-KEYCLOAK_DB_NAME=keycloak
-KEYCLOAK_DB_USER=keycloak
-KEYCLOAK_DB_PASSWORD=<secret>
-KEYCLOAK_ADMIN_USER=admin
-KEYCLOAK_ADMIN_PASSWORD=<secret>
-KEYCLOAK_HOSTNAME=auth.example.com
+# Authentik
+AUTHENTIK_POSTGRES_DB=authentik
+AUTHENTIK_POSTGRES_USER=authentik
+AUTHENTIK_POSTGRES_PASSWORD=<secret>
+AUTHENTIK_SECRET_KEY=<generate-with: openssl rand -base64 60>
+AUTHENTIK_EMAIL_HOST=smtp.example.com
+AUTHENTIK_EMAIL_PORT=587
+AUTHENTIK_EMAIL_USE_TLS=true
+AUTHENTIK_EMAIL_FROM=authentik@example.com
 
 # Add new service secrets below...
 ```
