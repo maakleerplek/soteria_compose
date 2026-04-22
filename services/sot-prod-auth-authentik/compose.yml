@@ -36,7 +36,7 @@ services:
       AUTHENTIK_EMAIL__FROM: ${AUTHENTIK_EMAIL_FROM}
       TZ: 'Europe/Brussels'
     volumes:
-      - /docker_data/sot-prod-auth-authentik_media:/media
+      - /docker_data/sot-prod-auth-authentik_data:/data
       - /docker_data/sot-prod-auth-authentik_templates:/templates
     ports:
       - "9080:9000"
@@ -65,7 +65,7 @@ services:
       TZ: 'Europe/Brussels'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /docker_data/sot-prod-auth-authentik_media:/media
+      - /docker_data/sot-prod-auth-authentik_data:/data
       - /docker_data/sot-prod-auth-authentik_certs:/certs
       - /docker_data/sot-prod-auth-authentik_templates:/templates
     shm_size: 512mb
