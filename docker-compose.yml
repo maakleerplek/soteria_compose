@@ -7,4 +7,3 @@ include:
   - services/sot-prod-auth-keycloak/compose.yml
   - services/sot-prod-dns-adguard/compose.yml
   - services/sot-prod-pass-bitwarden/compose.yml
-  - services/sot-prod-latex-overleaf/compose.yml

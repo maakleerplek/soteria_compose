@@ -58,13 +58,6 @@ BITWARDEN_SSO_ROLES_ENABLED=false
 BITWARDEN_SSO_ROLES_DEFAULT_TO_USER=true
 
 # =============================================================================
-# Overleaf (LaTeX Editor)
-# =============================================================================
-OVERLEAF_APP_NAME=Soteria Overleaf
-OVERLEAF_SITE_URL=https://overleaf.maakleerplek.be
-OVERLEAF_ADMIN_EMAIL=ict@maakleerplek.be
-
-# =============================================================================
 # Legacy/Duplicate entries (consider removing these duplicates)
 # =============================================================================
 WIKI_POSTGRES_DB=wiki

@@ -69,15 +69,6 @@ All services use timezone `Europe/Brussels`.
 - **Ports**: 53 (DNS TCP/UDP), 5350 (web UI HTTP), 5443 (web UI HTTPS), 853 (DNS over TLS), 784 (DNS over QUIC), 3082 (alternate web UI)
 - **Data**: `/docker_data/soft-prod-adguard/work`, `/docker_data/soft-prod-adguard/conf`
 
-### sot-prod-latex-overleaf
-- **Image**: `sharelatex/sharelatex:latest` + MongoDB 6.0 + Redis 7 Alpine
-- **Purpose**: Overleaf Community Edition - collaborative LaTeX editor
-- **Ports**: 8083 → 80
-- **Services**: `overleaf` (app), `overleaf-mongo` (database), `overleaf-redis` (cache)
-- **Data**: `/docker_data/sot-prod-latex-overleaf_data`, `/docker_data/sot-prod-latex-overleaf-mongo_data`, `/docker_data/sot-prod-latex-overleaf-redis_data`
-- **Secrets**: `OVERLEAF_APP_NAME`, `OVERLEAF_SITE_URL`, `OVERLEAF_ADMIN_EMAIL`
-- **Note**: First admin user must be created via `/launchpad` page or CLI after deployment. Run `docker exec sot-prod-latex-overleaf tlmgr install scheme-full` to install complete TeXLive.
-
 ### Infrastructure: Portainer
 - **Image**: `portainer/portainer-ce:lts`
 - **Location**: [infrastructure/compose.yml](infrastructure/compose.yml)
@@ -242,11 +233,6 @@ KEYCLOAK_DB_PASSWORD=<secret>
 KEYCLOAK_ADMIN_USER=admin
 KEYCLOAK_ADMIN_PASSWORD=<secret>
 KEYCLOAK_HOSTNAME=auth.example.com
-
-# Overleaf
-OVERLEAF_APP_NAME=Soteria Overleaf
-OVERLEAF_SITE_URL=http://localhost:3083
-OVERLEAF_ADMIN_EMAIL=admin@example.com
 
 # Add new service secrets below...
 ```
