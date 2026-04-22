@@ -11,7 +11,7 @@ services:
       - /docker_data/sot-prod-auth-authentik-postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER} && psql -U $${POSTGRES_USER} -d $${POSTGRES_DB} -c '\\q'"]
       interval: 30s
       start_period: 20s
       timeout: 5s
