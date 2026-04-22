@@ -55,8 +55,8 @@ services:
       - /docker_data/sot-prod-auth-authentik_media:/media
       - /docker_data/sot-prod-auth-authentik_templates:/templates
     ports:
-      - "9000:9000"
-      - "9443:9443"
+      - "9080:9000"
+      - "9444:9443"
     restart: unless-stopped
 
   authentik-worker:
