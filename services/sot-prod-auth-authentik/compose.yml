@@ -11,36 +11,20 @@ services:
       - /docker_data/sot-prod-auth-authentik-postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d ${AUTHENTIK_POSTGRES_DB} -U ${AUTHENTIK_POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 30s
+      start_period: 20s
       timeout: 5s
       retries: 5
 
-  authentik-redis:
-    image: redis:alpine
-    container_name: sot-prod-auth-authentik-redis
-    environment:
-      TZ: 'Europe/Brussels'
-    volumes:
-      - /docker_data/sot-prod-auth-authentik-redis_data:/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
-      interval: 30s
-      timeout: 3s
-      retries: 5
-
   authentik-server:
-    image: ghcr.io/goauthentik/server:2024.10.5
+    image: ghcr.io/goauthentik/server:2026.2.2
     container_name: sot-prod-auth-authentik-server
     command: server
     depends_on:
       authentik-db:
         condition: service_healthy
-      authentik-redis:
-        condition: service_healthy
     environment:
-      AUTHENTIK_REDIS__HOST: authentik-redis
       AUTHENTIK_POSTGRESQL__HOST: authentik-db
       AUTHENTIK_POSTGRESQL__NAME: ${AUTHENTIK_POSTGRES_DB}
       AUTHENTIK_POSTGRESQL__USER: ${AUTHENTIK_POSTGRES_USER}
@@ -57,19 +41,18 @@ services:
     ports:
       - "9080:9000"
       - "9444:9443"
+    shm_size: 512mb
     restart: unless-stopped
 
   authentik-worker:
-    image: ghcr.io/goauthentik/server:2024.10.5
+    image: ghcr.io/goauthentik/server:2026.2.2
     container_name: sot-prod-auth-authentik-worker
     command: worker
+    user: root
     depends_on:
       authentik-db:
         condition: service_healthy
-      authentik-redis:
-        condition: service_healthy
     environment:
-      AUTHENTIK_REDIS__HOST: authentik-redis
       AUTHENTIK_POSTGRESQL__HOST: authentik-db
       AUTHENTIK_POSTGRESQL__NAME: ${AUTHENTIK_POSTGRES_DB}
       AUTHENTIK_POSTGRESQL__USER: ${AUTHENTIK_POSTGRES_USER}
@@ -81,7 +64,9 @@ services:
       AUTHENTIK_EMAIL__FROM: ${AUTHENTIK_EMAIL_FROM}
       TZ: 'Europe/Brussels'
     volumes:
-      - /docker_data/sot-prod-auth-authentik_media:/media
-      - /docker_data/sot-prod-auth-authentik_templates:/templates
       - /var/run/docker.sock:/var/run/docker.sock
+      - /docker_data/sot-prod-auth-authentik_media:/media
+      - /docker_data/sot-prod-auth-authentik_certs:/certs
+      - /docker_data/sot-prod-auth-authentik_templates:/templates
+    shm_size: 512mb
     restart: unless-stopped
