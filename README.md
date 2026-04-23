@@ -40,8 +40,8 @@ make backup       # rsync data + secrets to TrueNAS
    ```
 2. **Clone this repo**
    ```bash
-   git clone https://github.com/maakleerplek/soteria_compose /docker_apps
-   cd /docker_apps
+   git clone https://github.com/maakleerplek/soteria_compose /opt/stacks/soteria-compose
+   cd /opt/stacks/soteria-compose
    ```
 3. **Restore data from TrueNAS**
    ```bash
