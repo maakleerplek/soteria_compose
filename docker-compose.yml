@@ -1,6 +1,6 @@
 name: sot-prod-stack
 
-# The Include list: Docker will merge these into one giant config at runtime
+# The include list: Docker merges these into one unified config at runtime.
 include:
   - services/sot-prod-proxy-nginx/compose.yml
   - services/sot-prod-wiki-wikijs/compose.yml

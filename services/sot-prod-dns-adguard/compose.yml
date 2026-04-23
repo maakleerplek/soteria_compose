@@ -1,17 +1,16 @@
-version: "3"
 services:
-  adguardhome:
+  sot-prod-dns-adguard:
     image: adguard/adguardhome
-    container_name: soft-prod-adguard
+    container_name: sot-prod-dns-adguard
     restart: unless-stopped
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - "5350:80/tcp" # AdGuard Home web UI HTTP on host port 5350
-      - "5443:443/tcp" # AdGuard Home web UI HTTPS on host port 5443
-      - "853:853/tcp" # DNS over TLS
-      - "784:784/udp" # DNS over QUIC
-      - "3082:3000/tcp" # Optional, web UI alternate port
+      - "5350:80/tcp"
+      - "5443:443/tcp"
+      - "853:853/tcp"
+      - "784:784/udp"
+      - "3082:3000/tcp"
     volumes:
-      - /docker_data/soft-prod-adguard/work:/opt/adguardhome/work
-      - /docker_data/soft-prod-adguard/conf:/opt/adguardhome/conf
+      - /docker_data/sot-prod-dns-adguard/work:/opt/adguardhome/work
+      - /docker_data/sot-prod-dns-adguard/conf:/opt/adguardhome/conf

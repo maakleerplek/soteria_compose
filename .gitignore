@@ -1,6 +1,1 @@
-.backup/
-*.env
-env
-wikijs/db_data/*
-.secrets/
-CLAUDE.md
+secrets/.env
