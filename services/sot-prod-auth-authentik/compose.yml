@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: ${AUTHENTIK_POSTGRES_PASSWORD}
       TZ: 'Europe/Brussels'
     volumes:
-      - /docker_data/sot-prod-auth-authentik-postgres_data:/var/lib/postgresql/data
+      - /var/lib/docker-compose/sot-prod-auth-authentik-postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER} && psql -U $${POSTGRES_USER} -d $${POSTGRES_DB} -c 'SELECT 1'"]
@@ -36,8 +36,8 @@ services:
       AUTHENTIK_EMAIL__FROM: ${AUTHENTIK_EMAIL_FROM}
       TZ: 'Europe/Brussels'
     volumes:
-      - /docker_data/sot-prod-auth-authentik_data:/data
-      - /docker_data/sot-prod-auth-authentik_templates:/templates
+      - /var/lib/docker-compose/sot-prod-auth-authentik_data:/data
+      - /var/lib/docker-compose/sot-prod-auth-authentik_templates:/templates
     ports:
       - "9080:9000"
       - "9444:9443"
@@ -65,8 +65,8 @@ services:
       TZ: 'Europe/Brussels'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /docker_data/sot-prod-auth-authentik_data:/data
-      - /docker_data/sot-prod-auth-authentik_certs:/certs
-      - /docker_data/sot-prod-auth-authentik_templates:/templates
+      - /var/lib/docker-compose/sot-prod-auth-authentik_data:/data
+      - /var/lib/docker-compose/sot-prod-auth-authentik_certs:/certs
+      - /var/lib/docker-compose/sot-prod-auth-authentik_templates:/templates
     shm_size: 512mb
     restart: unless-stopped

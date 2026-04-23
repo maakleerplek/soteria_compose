@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: ${WIKI_POSTGRES_USER}
       TZ: 'Europe/Brussels'
     volumes:
-      - /docker_data/sot-prod-wiki-wikijs-wikidb_data:/var/lib/postgresql/data
+      - /var/lib/docker-compose/sot-prod-wiki-wikijs-wikidb_data:/var/lib/postgresql/data
     restart: unless-stopped
 
   wiki:
@@ -28,4 +28,4 @@ services:
     ports:
       - "3081:3000"
     volumes:
-      - /docker_data/sot-prod-wiki-wikijs-wiki_data_content:/wiki/data/content
+      - /var/lib/docker-compose/sot-prod-wiki-wikijs-wiki_data_content:/wiki/data/content

@@ -11,5 +11,5 @@ services:
     environment:
       TZ: 'Europe/Brussels'
     volumes:
-      - /docker_data/sot-prod-proxy-nginx_data:/data
-      - /docker_data/sot-prod-proxy-nginx_letsencrypt:/etc/letsencrypt
+      - /var/lib/docker-compose/sot-prod-proxy-nginx_data:/data
+      - /var/lib/docker-compose/sot-prod-proxy-nginx_letsencrypt:/etc/letsencrypt

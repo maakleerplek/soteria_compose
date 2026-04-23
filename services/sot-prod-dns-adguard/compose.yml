@@ -12,5 +12,5 @@ services:
       - "784:784/udp"
       - "3082:3000/tcp"
     volumes:
-      - /docker_data/sot-prod-dns-adguard/work:/opt/adguardhome/work
-      - /docker_data/sot-prod-dns-adguard/conf:/opt/adguardhome/conf
+      - /var/lib/docker-compose/sot-prod-dns-adguard/work:/opt/adguardhome/work
+      - /var/lib/docker-compose/sot-prod-dns-adguard/conf:/opt/adguardhome/conf

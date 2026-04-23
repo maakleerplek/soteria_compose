@@ -14,7 +14,7 @@ Modular structure using Docker Compose `include`:
 - **Root** `docker-compose.yml` — stack name + include list
 - **`services/{service-name}/compose.yml`** — one directory per service
 - **`secrets/.env`** — all secrets, git-ignored, backed up to TrueNAS + Bitwarden
-- **`/docker_data/`** — all persistent data on the host, backed up to TrueNAS
+- **`/var/lib/docker-compose/`** — all persistent data on the host, backed up to TrueNAS
 
 ## Naming Convention
 
@@ -45,7 +45,7 @@ services:
       TZ: 'Europe/Brussels'                # always set timezone
       SOME_SECRET: ${ENV_VAR}              # reference secrets/.env via ${}
     volumes:
-      - /docker_data/sot-prod-{role}-{app}:/app/data   # always /docker_data/
+      - /var/lib/docker-compose/sot-prod-{role}-{app}:/app/data   # always /var/lib/docker-compose/
     ports:
       - host:container
 ```
@@ -58,9 +58,9 @@ All in `secrets/.env`. Never committed to Git.
 
 ## Data
 
-All volumes use `/docker_data/{container-name}/` on the host. One rsync backs up everything:
+All volumes use `/var/lib/docker-compose/{container-name}/` on the host. One rsync backs up everything:
 ```bash
-rsync -az /docker_data/ hel-prod-nas-truenas:/mnt/pool/backups/soteria/docker_data/
+rsync -az /var/lib/docker-compose/ hel-prod-nas-truenas:/mnt/pool/backups/soteria/var/lib/docker-compose/
 ```
 
 ## Deployment

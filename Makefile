@@ -31,7 +31,7 @@ restart:
 
 ## Backup all data and secrets to TrueNAS
 backup:
-\trsync -az /docker_data/ hel-prod-nas-truenas:/mnt/pool/backups/soteria/docker_data/
+\trsync -az /var/lib/docker-compose/ hel-prod-nas-truenas:/mnt/pool/backups/soteria/var/lib/docker-compose/
 \trsync -az ./secrets/.env hel-prod-nas-truenas:/mnt/pool/backups/soteria/secrets/
 
 ## Show this help
