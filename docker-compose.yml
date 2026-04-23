@@ -6,4 +6,3 @@ include:
   - services/sot-prod-wiki-wikijs/compose.yml
   - services/sot-prod-auth-authentik/compose.yml
   - services/sot-prod-dns-adguard/compose.yml
-  - services/sot-prod-infra-netbox/compose.yml
