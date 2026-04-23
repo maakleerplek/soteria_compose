@@ -1,0 +1,115 @@
+services:
+  netbox-db:
+    image: postgres:16-alpine
+    container_name: sot-prod-infra-netbox-db
+    environment:
+      POSTGRES_DB: ${NETBOX_POSTGRES_DB}
+      POSTGRES_USER: ${NETBOX_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${NETBOX_POSTGRES_PASSWORD}
+      TZ: 'Europe/Brussels'
+    volumes:
+      - /docker_data/sot-prod-infra-netbox-postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER} && psql -U $${POSTGRES_USER} -d $${POSTGRES_DB} -c 'SELECT 1'"]
+      interval: 10s
+      start_period: 60s
+      timeout: 5s
+      retries: 10
+
+  netbox-redis:
+    image: valkey/valkey:8-alpine
+    container_name: sot-prod-infra-netbox-redis
+    command: valkey-server --requirepass ${NETBOX_REDIS_PASSWORD}
+    environment:
+      TZ: 'Europe/Brussels'
+    volumes:
+      - /docker_data/sot-prod-infra-netbox-redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli -a $${NETBOX_REDIS_PASSWORD} ping | grep PONG"]
+      interval: 10s
+      start_period: 30s
+      timeout: 3s
+      retries: 5
+
+  netbox-redis-cache:
+    image: valkey/valkey:8-alpine
+    container_name: sot-prod-infra-netbox-redis-cache
+    command: valkey-server --requirepass ${NETBOX_REDIS_CACHE_PASSWORD}
+    environment:
+      TZ: 'Europe/Brussels'
+    volumes:
+      - /docker_data/sot-prod-infra-netbox-redis-cache_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli -a $${NETBOX_REDIS_CACHE_PASSWORD} ping | grep PONG"]
+      interval: 10s
+      start_period: 30s
+      timeout: 3s
+      retries: 5
+
+  netbox:
+    image: ghcr.io/netbox-community/netbox:latest
+    container_name: sot-prod-infra-netbox
+    user: unit:root
+    depends_on:
+      netbox-db:
+        condition: service_healthy
+      netbox-redis:
+        condition: service_healthy
+      netbox-redis-cache:
+        condition: service_healthy
+    environment:
+      CORS_ORIGIN_ALLOW_ALL: true
+      DB_HOST: netbox-db
+      DB_NAME: ${NETBOX_POSTGRES_DB}
+      DB_USER: ${NETBOX_POSTGRES_USER}
+      DB_PASSWORD: ${NETBOX_POSTGRES_PASSWORD}
+      REDIS_HOST: netbox-redis
+      REDIS_PASSWORD: ${NETBOX_REDIS_PASSWORD}
+      REDIS_CACHE_HOST: netbox-redis-cache
+      REDIS_CACHE_PASSWORD: ${NETBOX_REDIS_CACHE_PASSWORD}
+      SECRET_KEY: ${NETBOX_SECRET_KEY}
+      SUPERUSER_EMAIL: ${NETBOX_SUPERUSER_EMAIL}
+      SUPERUSER_PASSWORD: ${NETBOX_SUPERUSER_PASSWORD}
+      ALLOWED_HOSTS: '*'
+      TZ: 'Europe/Brussels'
+    volumes:
+      - /docker_data/sot-prod-infra-netbox_media:/opt/netbox/netbox/media
+      - /docker_data/sot-prod-infra-netbox_reports:/opt/netbox/netbox/reports
+      - /docker_data/sot-prod-infra-netbox_scripts:/opt/netbox/netbox/scripts
+    ports:
+      - "8084:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsSL http://localhost:8080/login/ || exit 1"]
+      interval: 30s
+      start_period: 120s
+      timeout: 10s
+      retries: 5
+
+  netbox-worker:
+    image: ghcr.io/netbox-community/netbox:latest
+    container_name: sot-prod-infra-netbox-worker
+    user: unit:root
+    command: /opt/netbox/venv/bin/python /opt/netbox/netbox/manage.py rqworker
+    depends_on:
+      netbox:
+        condition: service_healthy
+    environment:
+      DB_HOST: netbox-db
+      DB_NAME: ${NETBOX_POSTGRES_DB}
+      DB_USER: ${NETBOX_POSTGRES_USER}
+      DB_PASSWORD: ${NETBOX_POSTGRES_PASSWORD}
+      REDIS_HOST: netbox-redis
+      REDIS_PASSWORD: ${NETBOX_REDIS_PASSWORD}
+      REDIS_CACHE_HOST: netbox-redis-cache
+      REDIS_CACHE_PASSWORD: ${NETBOX_REDIS_CACHE_PASSWORD}
+      SECRET_KEY: ${NETBOX_SECRET_KEY}
+      TZ: 'Europe/Brussels'
+    volumes:
+      - /docker_data/sot-prod-infra-netbox_media:/opt/netbox/netbox/media
+      - /docker_data/sot-prod-infra-netbox_reports:/opt/netbox/netbox/reports
+      - /docker_data/sot-prod-infra-netbox_scripts:/opt/netbox/netbox/scripts
+    restart: unless-stopped
